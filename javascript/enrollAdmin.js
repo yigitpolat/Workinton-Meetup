@@ -17,8 +17,8 @@ async function main() {
     try {
 
         // Create a new CA client for interacting with the CA.
-        const caInfo = ccp.certificateAuthorities['ca.org1.example.com'];
-        const caTLSCACertsPath = path.resolve(__dirname, 'mychannel_fabcar_profile.json', caInfo.tlsCACerts.path);
+        const caInfo = ccp.certificateAuthorities[Object.keys(ccp.certificateAuthorities)[0]];
+        const caTLSCACertsPath = path.resolve(__dirname, 'mychannel_fabcar_profile.json');
         const caTLSCACerts = fs.readFileSync(caTLSCACertsPath);
         const ca = new FabricCAServices(caInfo.url, { trustedRoots: caTLSCACerts, verify: false }, caInfo.caName);
 
@@ -36,7 +36,7 @@ async function main() {
 
         // Enroll the admin user, and import the new identity into the wallet.
         const enrollment = await ca.enroll({ enrollmentID: 'admin', enrollmentSecret: 'adminpw' });
-        const identity = X509WalletMixin.createIdentity('ORG1MSP', enrollment.certificate, enrollment.key.toBytes());
+        const identity = X509WalletMixin.createIdentity('org1msp', enrollment.certificate, enrollment.key.toBytes());
         await wallet.import('admin', identity);
         console.log('Successfully enrolled admin user "admin" and imported it into the wallet');
 

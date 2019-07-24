@@ -18,9 +18,9 @@ async function main() {
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the user.
-        const userExists = await wallet.exists('user1');
+        const userExists = await wallet.exists(process.env.username);
         if (userExists) {
-            console.log('An identity for the user "user1" already exists in the wallet');
+            console.log(`An identity for the user "${process.env.username}" already exists in the wallet`);
             return;
         }
 
@@ -41,14 +41,14 @@ async function main() {
         const adminIdentity = gateway.getCurrentIdentity();
 
         // Register the user, enroll the user, and import the new identity into the wallet.
-        const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: 'user1', role: 'client' }, adminIdentity);
-        const enrollment = await ca.enroll({ enrollmentID: 'user1', enrollmentSecret: secret });
-        const userIdentity = X509WalletMixin.createIdentity('ORG1MSP', enrollment.certificate, enrollment.key.toBytes());
-        await wallet.import('user1', userIdentity);
-        console.log('Successfully registered and enrolled admin user "user1" and imported it into the wallet');
+        const secret = await ca.register({ affiliation: 'org1.department1', enrollmentID: process.env.username, role: 'client' }, adminIdentity);
+        const enrollment = await ca.enroll({ enrollmentID: process.env.username, enrollmentSecret: secret });
+        const userIdentity = X509WalletMixin.createIdentity('org1msp', enrollment.certificate, enrollment.key.toBytes());
+        await wallet.import(process.env.username, userIdentity);
+        console.log(`Successfully registered and enrolled admin user "${process.env.username}" and imported it into the wallet`);
 
     } catch (error) {
-        console.error(`Failed to register user "user1": ${error}`);
+        console.error(`Failed to register user "${process.env.username}": ${error}`);
         process.exit(1);
     }
 }

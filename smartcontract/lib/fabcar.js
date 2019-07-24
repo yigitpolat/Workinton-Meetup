@@ -107,7 +107,7 @@ class FabCar extends Contract {
 
     async queryAllCars(ctx) {
         const startKey = 'CAR0';
-        const endKey = 'CAR999';
+        const endKey = 'CAR999999';
 
         const iterator = await ctx.stub.getStateByRange(startKey, endKey);
 
